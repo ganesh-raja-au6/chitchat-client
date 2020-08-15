@@ -2,9 +2,8 @@ import React, { Component } from "react";
 import {withRouter}from "react-router-dom"
 // import axios from "axios";
 
-class Signup extends Component {
+class Signin extends Component {
   state = {
-    username: "",
     email: "",
     password: "",
     error: "",
@@ -20,7 +19,7 @@ class Signup extends Component {
     this.setState({submit : "submitting..."})
     const { username, password, email } = this.state;
     const user = { username, password, email };
-    fetch(`${process.env.REACT_APP_SERVER_URL}/api/v1/auth/signup`, {
+    fetch(`${process.env.REACT_APP_SERVER_URL}/api/v1/auth/signin`, {
       method: "POST",
       headers: {
         "content-type": "application/json",
@@ -32,7 +31,7 @@ class Signup extends Component {
         if(res.error){
           return this.setState({error : res.error, submit : "submit",})
         }
-        this.setState({success : "Successfully Registered. Please login", submit : "submit",})
+        this.setState({success : "Successfully Loggedin.", submit : "submit",})
       })
       .catch((err) => console.log(err));
   };
@@ -41,22 +40,12 @@ class Signup extends Component {
       <div className="container">
         <div className="col-8 offset-2">
           <form className="border mt-5" onSubmit={(e) => this.handleSubmit(e)}>
-            <h2 className="text-center text-white bg-primary py-3">Register</h2>
+            <h2 className="text-center text-white bg-primary py-3">Login</h2>
             <div className="p-3 mt-2">
               <p className={this.state.error ? "text-danger text-center" : "text-success text-center"}>
                 {" "}
                 {this.state.error ? this.state.error : ""}{this.state.success ? this.state.success : ""} &nbsp;
               </p>
-              <div className="form-group">
-                <label htmlFor="username">USER NAME</label>
-                <input
-                  type="text"
-                  id="username"
-                  className="form-control"
-                  placeholder="USER NAME"
-                  onChange={this.handleChange("username")}
-                />
-              </div>
               <div className="form-group">
                 <label htmlFor="email">EMAIL</label>
                 <input
@@ -92,4 +81,4 @@ class Signup extends Component {
   }
 }
 
-export default withRouter(Signup);
+export default withRouter(Signin);
