@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import axios from "axios";
 
-class Signup extends Component {
+class CreatePost extends Component {
   state = {
     username: "",
     email: "",
@@ -123,4 +123,4 @@ class Signup extends Component {
   }
 }
 
-export default Signup;
+export default CreatePost;

@@ -1,15 +1,17 @@
 import React from "react";
-import { Link, withRouter } from "react-router-dom";
+import { Link } from "react-router-dom";
 
-import { signout } from "../Auth/Signout";
-import { isAuthenticated } from "../Auth/isAuthenticated";
+// import { signout } from "../Auth/Signout";
+import {logoutuser} from '../../redux/store'
+import { connect } from "react-redux";
 
 const isActive = (history, path) => {
-  if (history.location.pathname === path) return "nav-item active";
+  // if (history.location.pathname === path) return "nav-item active";
   return "nav-item";
 };
 
-const Navbar = ({ history }) => (
+const Navbar = ({ history, user, logoutuser }) => (
+  
   <nav className="navbar navbar-expand-lg navbar-light bg-light">
     <div className="container">
       <Link className="navbar-brand" to="/">
@@ -28,7 +30,7 @@ const Navbar = ({ history }) => (
       </button>
       <div className="collapse navbar-collapse" id="navbarNav">
         <ul className="navbar-nav ml-auto">
-          {!isAuthenticated() && (
+          {!user && (
             <>
               <li className={isActive(history, "/signup")}>
                 <Link className="nav-link" to="/signup">
@@ -42,15 +44,22 @@ const Navbar = ({ history }) => (
               </li>
             </>
           )}
-          {isAuthenticated() && (
+          {user && (
             <>
               <li className="nav-item">
-                <span className="nav-link">{isAuthenticated().user.username}</span>
+                <Link to="/createpost" className="nav-link">
+                  Create Post
+                </Link>
+              </li>
+              <li className="nav-item">
+                <span className="nav-link text-primary">
+                  {user.user.username}
+                </span>
               </li>
               <li className={isActive(history, "/signout")}>
                 <a
-                  className="nav-link"
-                  onClick={() => signout(() => history.push("/"))}
+                  className="nav-link text-danger"
+                  onClick={()=>logoutuser()}
                   style={{ cursor: "pointer" }}
                 >
                   Logout
@@ -64,4 +73,12 @@ const Navbar = ({ history }) => (
   </nav>
 );
 
-export default withRouter(Navbar);
+
+
+const mapStateToProps = (state, ownProps) => {
+  return {
+    user: state.user,
+  };
+};
+
+export default connect(mapStateToProps, {logoutuser})(Navbar);

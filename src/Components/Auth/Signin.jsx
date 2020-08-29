@@ -1,5 +1,7 @@
-import React, { Component } from "react";
+  import React, { Component } from "react";
 import { Redirect } from "react-router-dom";
+import {connect} from "react-redux"
+import {setuser} from "../../redux/store"
 
 class Signin extends Component {
   state = {
@@ -16,35 +18,20 @@ class Signin extends Component {
   handleSubmit = (e) => {
     e.preventDefault();
     this.setState({ submit: "submitting..." });
-    const { password, email } = this.state;
-    const user = { password, email };
-    this.signup(user).then((data) => {
-      if (data.error) {
-        this.setState({ submit: "Submit", password: "" });
-        this.setState({ error: data.error });
-      } else {
-        this.setState({ submit: "Submit", success: true });
-        if (typeof window !== "undefined") {
-          localStorage.setItem("chit-chat-auth", JSON.stringify(data));
-        }
-      }
-    });
+    this.props.setuser(this.state)
+    if(this.props.error){
+      this.setState({error: this.props.error})
+    }
   };
-  signup = (user) => {
-    return fetch(`${process.env.REACT_APP_SERVER_URL}/api/v1/auth/signin`, {
-      method: "POST",
-      headers: {
-        Accept: "application/json",
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(user),
-    })
-      .then((res) => res.json())
-      .catch((err) => console.log(err));
-  };
-  form = (email, password, success, error, submit) => {
+  render() {
+    const { email, password, submit, error, success } = this.state;
+    if (this.props.user) {
+      return <Redirect to="/" />;
+    }
     return (
-      <form className="mt-5 border" onSubmit={(e) => this.handleSubmit(e)}>
+      <div className="container">
+        <div className="col-8 offset-2">
+          <form className="mt-5 border" onSubmit={(e) => this.handleSubmit(e)}>
         <h2 className="text-center text-white bg-primary py-3">Login</h2>
         <div className="p-3 mt-2">
           <p
@@ -88,21 +75,16 @@ class Signin extends Component {
           </div>
         </div>
       </form>
-    );
-  };
-  render() {
-    const { email, password, submit, error, success } = this.state;
-    if (success) {
-      return <Redirect to="/" />;
-    }
-    return (
-      <div className="container">
-        <div className="col-8 offset-2">
-          {this.form(email, password, success, error, submit)}
         </div>
       </div>
     );
   }
 }
+const mapStateToProps = (state, ownProps) => {
+  return {
+      user: state.user,
+      error : state.error
+  }
+}
 
-export default Signin;
+export default connect(mapStateToProps, {setuser})(Signin);

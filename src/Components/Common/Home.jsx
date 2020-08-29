@@ -1,11 +1,19 @@
 import React from 'react'
-import {Redirect, withRouter} from 'react-router-dom'
-import {isAuthenticated} from "../Auth/isAuthenticated"
+import {Redirect} from 'react-router-dom'
+import { connect } from 'react-redux'
+import Posts from '../Auth/posts'
 
-const Home = ({ history}) => {
+const Home = ({ user}) => {
+    if(!user) return <Redirect to="/signin" />
     return (
-        <h1>Hello</h1>
+        <Posts />
     )
 }
 
-export default withRouter(Home)
+const mapStateToProps = (state, ownProps) => {
+    return {
+        user: state.user
+    }
+}
+
+export default connect(mapStateToProps)(Home)
