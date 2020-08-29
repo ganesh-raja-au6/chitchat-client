@@ -3,9 +3,8 @@ import axios from "axios";
 
 class CreatePost extends Component {
   state = {
-    username: "",
-    email: "",
-    password: "",
+    title: "",
+    description: "",
     error: "",
     submit: "Submit",
     success: false,
@@ -14,46 +13,53 @@ class CreatePost extends Component {
     this.setState({ error: "" });
     this.setState({ [name]: e.target.value });
   };
-  handleSubmit = (e) => {
+  handleSubmit = async (e) => {
     e.preventDefault();
-    const { username, email, password, submit, error, success } = this.state;
-    fetch("https://enigmatic-beach-53552.herokuapp.com/api/v1/auth/signup", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        username,
-        email,
-        password,
-      }),
-    })
-      .then((res) => res.json())
-      .then((res) => {
-        if (res.error) {
-          this.setState({ error: res.error });
-          return;
-        }
-        this.setState({ success: true }, () => {
-          if (this.state.success) {
-            this.setState({
-              error:
-                "A verification email has been sent to your email id kindly verify it.",
-            });
-          }
-        });
-      })
-      .catch((err) => {
-        if (err) {
-          this.setState({ error: err });
-        }
-      });
+    try{
+        this.setState({ submit: "submitting..." });
+        const { title, description, submit, error, success } = this.state;
+        const {data} = await axios.post(`https://enigmatic-beach-53552.herokuapp.com/api/v1/post`)
+        console.log('data',data)
+    }catch(err){
+        console.log('err', err)
+    }
+    // fetch("https://enigmatic-beach-53552.herokuapp.com/api/v1/post/", {
+    //   method: "POST",
+    //   headers: { "Content-Type": "application/json","Authorization" : "Bearer " + JSON.parse(localStorage.getItem('test')).token },
+    //   body: JSON.stringify({
+    //     title,
+    //     body : description,
+    //   }),
+    // })
+    //   .then((res) => res.json())
+    //   .then((res) => {
+    //     if (res.error) {
+    //       this.setState({ error: res.error });
+    //       return;
+    //     }
+    //     this.setState({ success: true, submit }, () => {
+    //       if (this.state.success) {
+    //         this.setState({
+    //           error: "post created successfully.",
+    //         });
+    //       }
+    //     });
+    //   })
+    //   .catch((err) => {
+    //     if (err) {
+    //       this.setState({ error: err.error });
+    //     }
+    //   });
   };
   render() {
-    const { username, email, password, submit, error, success } = this.state;
+    const { title, description, submit, error, success } = this.state;
     return (
       <div className="container">
         <div className="col-8 offset-2">
           <form className="mt-5 border" onSubmit={(e) => this.handleSubmit(e)}>
-            <h2 className="text-center text-white bg-primary py-3">Register</h2>
+            <h2 className="text-center text-white bg-primary py-3">
+              CREATE POST
+            </h2>
             <div className="p-3 mt-2">
               <p
                 className={
@@ -66,46 +72,34 @@ class CreatePost extends Component {
                 {error ? error : ""} &nbsp;{" "}
               </p>
               <div className="form-group">
-                <label htmlFor="username">username</label>
+                <label htmlFor="username">title</label>
                 <input
                   type="text"
                   className="form-control"
-                  placeholder="username"
-                  value={username}
+                  placeholder="add a title"
+                  value={title}
                   required
                   min="4"
                   max="25"
-                  name="username"
-                  onChange={this.handleChange("username")}
+                  name="title"
+                  onChange={this.handleChange("title")}
                 />
               </div>
               <div className="form-group">
-                <label htmlFor="email">email</label>
-                <input
-                  type="email"
+                <label htmlFor="description">body</label>
+                <textarea
+                  name="description"
+                  onChange={this.handleChange("description")}
+                  id=""
+                  cols="30"
+                  rows="10"
+                  min="10"
+                  max="100"
+                  value={description}
                   className="form-control"
-                  placeholder="email"
-                  value={email}
-                  required
-                  min="4"
-                  max="25"
-                  name="email"
-                  onChange={this.handleChange("email")}
-                />
-              </div>
-              <div className="form-group">
-                <label htmlFor="password">password</label>
-                <input
-                  type="password"
-                  className="form-control"
-                  placeholder="password"
-                  value={password}
-                  required
-                  min="8"
-                  max="25"
-                  name="password"
-                  onChange={this.handleChange("password")}
-                />
+                >
+                  add a description
+                </textarea>
               </div>
               <div className="form-group">
                 <input
